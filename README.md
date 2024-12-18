@@ -1,4 +1,3 @@
-## The App is under development
 
 # Bookpedia
 
