@@ -7,6 +7,12 @@ Bookpedia is a book library app built with <b>Compose Multiplatform</b> that uti
 1. Ktor is used for fetching books from the API.
 2. Favorite books will be stored in local storage using room.
 3. The App is compatible to run on Android, IOS and Desktop.
+
+
+##App
+<table>
+   <td><img src="https://github.com/JahangirJadi/CMP-Bookpedia/blob/main/screenshots/app_gif.gif" width="250px"</td>
+</table>
    
 
 ## Screenshots
