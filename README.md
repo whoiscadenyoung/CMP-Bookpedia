@@ -9,7 +9,7 @@ Bookpedia is a book library app built with <b>Compose Multiplatform</b> that uti
 3. The App is compatible to run on Android, IOS and Desktop.
 
 
-##App
+## App
 <table>
    <td><img src="https://github.com/JahangirJadi/CMP-Bookpedia/blob/main/screenshots/app_gif.gif" width="250px"</td>
 </table>
