@@ -1,14 +1,54 @@
-This is a Kotlin Multiplatform project targeting Android, iOS, Desktop.
+## The App is under development
 
-* `/composeApp` is for code that will be shared across your Compose Multiplatform applications.
-  It contains several subfolders:
-  - `commonMain` is for code that’s common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-    `iosMain` would be the right folder for such calls.
+# Bookpedia
 
-* `/iosApp` contains iOS applications. Even if you’re sharing your UI with Compose Multiplatform, 
-  you need this entry point for your iOS app. This is also where you should add SwiftUI code for your project.
+Bookpedia is a book library app built with <b>Compose Multiplatform</b> that utilizes modern Android technologies, including Jetpack Compose, MVI Architecture, Ktor, Room, and Koin. The app allows users to search for books and can also mark them as favorites.
+
+## App Features
+1. Ktor is used for fetching books from the API.
+2. Favorite books will be stored in local storage using room.
+3. The App is compatible to run on Android, IOS and Desktop.
+   
+
+## Screenshots
+
+<table>
+  <tr>
+     <th>Book List (Android)</th>
+     <th>Book Details (Android)</th>
+  </tr>
+    <tr>
+      <td><img src="https://github.com/JahangirJadi/CMP-Bookpedia/blob/main/screenshots/android_list.png" width="250px"</td>
+      <td><img src="https://github.com/JahangirJadi/CMP-Bookpedia/blob/main/screenshots/android_details.png" width="250px"</td>
+  </tr>
+
+   <tr>
+     <th>Book List (IOS)</th>
+     <th>Book Details (IOS)</th>
+  </tr>
+    <tr>
+      <td><img src="https://github.com/JahangirJadi/CMP-Bookpedia/blob/main/screenshots/ios_list.png" width="250px"</td>
+      <td><img src="https://github.com/JahangirJadi/CMP-Bookpedia/blob/main/screenshots/ios_details.png" width="250px"</td>
+  </tr>
 
 
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)…
+</table>
+
+<table>
+
+
+  <tr>
+     <th>Book List (Desktop)</th>
+  </tr>
+    <tr>
+      <td><img src="https://github.com/JahangirJadi/CMP-Bookpedia/blob/main/screenshots/desktop_list.png" width="500px"</td>
+  </tr>
+
+<tr>
+     <th>Book Details (Desktop)</th>
+  </tr>
+    <tr>
+      <td><img src="https://github.com/JahangirJadi/CMP-Bookpedia/blob/main/screenshots/desktop_details.png" width="500px"</td>
+  </tr>
+  
+</table>
