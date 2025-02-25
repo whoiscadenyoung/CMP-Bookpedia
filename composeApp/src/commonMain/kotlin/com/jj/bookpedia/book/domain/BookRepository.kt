@@ -15,6 +15,7 @@ interface BookRepository {
      fun isBookFavorite(id:String) : Flow<Boolean>
      suspend fun markAsFavorite(book: Book): EmptyResult< DataError.Local>
      suspend fun deleteFromFavorites(id: String)
-
-
+     
+     suspend fun saveCustomImage(bookId: String, imagePath: String): EmptyResult<DataError.Local>
+     suspend fun clearCustomImage(bookId: String): EmptyResult<DataError.Local>
 }

@@ -67,4 +67,26 @@ class DefaultBookRepository(
     override suspend fun deleteFromFavorites(id: String) {
         favoriteBookDao.deleteFavoriteBook(id)
     }
+
+    override suspend fun saveCustomImage(bookId: String, imagePath: String): Result<Unit, DataError.Local> {
+        return try {
+            favoriteBookDao.updateCustomImagePath(bookId, imagePath)
+            Result.Success(Unit)
+        } catch (e: SQLiteException) {
+            Result.Error(DataError.Local.DISK_FULL)
+        } catch (e: Exception) {
+            Result.Error(DataError.Local.UNKNOWN)
+        }
+    }
+
+    override suspend fun clearCustomImage(bookId: String): Result<Unit, DataError.Local> {
+        return try {
+            favoriteBookDao.clearCustomImagePath(bookId)
+            Result.Success(Unit)
+        } catch (e: SQLiteException) {
+            Result.Error(DataError.Local.DISK_FULL)
+        } catch (e: Exception) {
+            Result.Error(DataError.Local.UNKNOWN)
+        }
+    }
 }

@@ -11,80 +11,95 @@ This feature allows users to take photos of their favorite books. The camera fun
    - Border overlay for book alignment
    - Book detection using ML Kit
    - Automatic photo capture when a book is detected
-3. Store captured images in the database or file system
+3. Store captured image path in the favorite book entity
 4. Properly handle Android camera permissions using Accompanist
 
 ## Architecture
 
 ### Package Structure
-Following the project's clean architecture approach, we'll organize the camera feature as follows:
+Following the project's clean architecture approach, we've simplified the camera feature as follows:
 
 ```
-com.jj.bookpedia.camera/
-├── domain/
-│   ├── CameraRepository.kt (interface)
-│   ├── BookDetector.kt (interface)
-│   └── model/
-│       └── CapturedImage.kt
-├── data/
-│   ├── repository/
-│   │   └── DefaultCameraRepository.kt
-│   ├── detector/
-│   │   └── MLKitBookDetector.kt (Android-specific)
-│   └── database/
-│       ├── CapturedImageDao.kt
-│       └── CapturedImageEntity.kt
-└── presentation/
-    ├── camera/
-    │   ├── CameraAction.kt
-    │   ├── CameraScreen.kt
-    │   ├── CameraState.kt
-    │   ├── CameraViewModel.kt
-    │   └── components/
-    │       ├── CameraPreview.kt
-    │       ├── BookDetectionOverlay.kt
-    │       └── CameraControls.kt
-    └── book_detail/
-        └── components/
-            └── CameraButton.kt
+com.jj.bookpedia/
+├── book/
+│   ├── domain/
+│   │   ├── BookRepository.kt (interface, updated with image methods)
+│   │   └── model/
+│   │       └── Book.kt (updated with customImagePath)
+│   ├── data/
+│   │   ├── repository/
+│   │   │   └── DefaultBookRepository.kt (updated with image methods)
+│   │   └── database/
+│   │       ├── FavoriteBookDao.kt (updated with image methods)
+│   │       └── BookEntity.kt (updated with customImagePath)
+└── camera/
+    ├── domain/
+    │   └── BookDetector.kt (interface)
+    ├── data/
+    │   └── detector/
+    │       └── MLKitBookDetector.kt (Android-specific)
+    ├── presentation/
+    │   ├── camera/
+    │   │   ├── CameraAction.kt
+    │   │   ├── CameraScreen.kt
+    │   │   ├── CameraState.kt
+    │   │   ├── CameraViewModel.kt
+    │   │   └── components/
+    │   │       ├── CameraPreview.kt
+    │   │       ├── BookDetectionOverlay.kt
+    │   │       └── CameraControls.kt
+    │   └── book_detail/
+    │       └── components/
+    │           └── CameraButton.kt
+    └── util/
+        └── ImageFileManager.kt (platform-specific file management)
 ```
 
 ### Implementation Details
 
 #### Domain Layer
-- `CameraRepository`: Interface defining camera operations
+- `BookRepository`: Interface updated with methods for saving and clearing custom images
+- `Book`: Domain model updated with customImagePath field
 - `BookDetector`: Interface for book detection functionality
-- `CapturedImage`: Domain model for captured images
 
 #### Data Layer
-- `DefaultCameraRepository`: Implementation of the CameraRepository interface
-- `MLKitBookDetector`: Android-specific implementation of book detection using ML Kit
-- Database entities and DAOs for storing captured images
+- `DefaultBookRepository`: Implementation updated with methods for saving and clearing custom images
+- `FavoriteBookDao`: Updated with methods for updating and clearing the custom image path
+- `BookEntity`: Updated with customImagePath field
 
 #### Presentation Layer
 - `CameraScreen`: UI for the camera view
-- `CameraViewModel`: Manages camera state and actions
+- `CameraViewModel`: Manages camera state and actions, now using BookRepository
 - `CameraButton`: UI component for the book detail screen
+- `ImageFileManager`: Platform-specific utility for managing image files
 
 ### Expected/Actual Pattern
-We'll use the expected/actual pattern to handle platform-specific implementations:
+We use the expected/actual pattern to handle platform-specific implementations:
 
-- Common code will be in `commonMain`
-- Android-specific implementations will be in `androidMain`
-- iOS will have stub implementations in `iosMain`
+- Common code is in `commonMain`
+- Android-specific implementations are in `androidMain`
+- iOS has stub implementations in `iosMain`
 
 ## Database Schema Updates
 
-We'll need to update the database schema to store captured images:
+We've simplified the database schema by adding a customImagePath field to the BookEntity:
 
 ```kotlin
 @Entity
-data class CapturedImageEntity(
-    @PrimaryKey(autoGenerate = true)
-    val id: Long = 0,
-    val bookId: String,
-    val imagePath: String,
-    val captureDate: Long
+data class BookEntity(
+    @PrimaryKey(autoGenerate = false)
+    val id: String,
+    val title: String,
+    val description: String?,
+    val imageUrl: String,
+    val languages: List<String>,
+    val authors: List<String>,
+    val firstPublishYear: String?,
+    val ratingsAverage: Double?,
+    val ratingsCount: Int?,
+    val numPagesMedian: Int?,
+    val numEditions: Int,
+    val customImagePath: String? = null
 )
 ```
 
@@ -92,17 +107,16 @@ data class CapturedImageEntity(
 - Accompanist Permissions: For handling Android camera permissions
 - CameraX: For camera functionality on Android
 - ML Kit: For book detection
-- Room: For database storage
 
 ## Implementation Plan
 
 ### Phase 1: Setup
 1. Add required dependencies to build.gradle.kts
 2. Update AndroidManifest.xml with camera permissions
-3. Create domain layer interfaces and models
+3. Update domain layer interfaces and models with image support
 
 ### Phase 2: Camera Integration
-1. Implement CameraRepository and BookDetector
+1. Implement BookDetector
 2. Create CameraScreen and ViewModel
 3. Implement permission handling with Accompanist
 
@@ -111,8 +125,8 @@ data class CapturedImageEntity(
 2. Connect camera button to navigation
 
 ### Phase 4: Storage Implementation
-1. Update database schema to store captured images
-2. Implement storage functionality in repository
+1. Update BookEntity with customImagePath field
+2. Implement storage functionality in BookRepository
 
 ### Phase 5: Testing and Refinement
 1. Test on Android devices
@@ -122,34 +136,33 @@ data class CapturedImageEntity(
 ## TODOs
 - [x] Add camera dependencies to build.gradle.kts
 - [x] Update AndroidManifest.xml with camera permissions
-- [x] Create domain layer interfaces and models
-- [x] Implement CameraRepository
+- [x] Update domain layer interfaces and models with image support
+- [x] Update BookRepository with image methods
 - [x] Create CameraScreen and ViewModel
 - [x] Implement permission handling with Accompanist
 - [x] Update BookDetailScreen with camera button
 - [x] Implement book detection with ML Kit
-- [x] Update database schema for image storage
+- [x] Create ImageFileManager for platform-specific file handling
 - [ ] Test and refine the feature
 
 ## Implementation Progress
 - ✅ Added camera dependencies (CameraX, ML Kit, Accompanist Permissions)
 - ✅ Updated AndroidManifest.xml with camera permissions
-- ✅ Created domain layer interfaces (CameraRepository, BookDetector)
-- ✅ Created data layer with Room database integration
-- ✅ Implemented DefaultCameraRepository
+- ✅ Updated domain layer interfaces (Book, BookRepository)
+- ✅ Updated data layer (BookEntity, FavoriteBookDao)
+- ✅ Implemented image methods in DefaultBookRepository
 - ✅ Created Android-specific ML Kit book detector
 - ✅ Added iOS stub implementations
 - ✅ Created camera UI components (CameraPreview, BookDetectionOverlay, CameraControls)
 - ✅ Implemented permission handling with Accompanist
 - ✅ Added camera button to BookDetailScreen (only for favorited books)
 - ✅ Updated navigation to include camera screen
-- ✅ Implemented database migration to add CapturedImageEntity
+- ✅ Created ImageFileManager for platform-specific file handling
 - ✅ Set up dependency injection with Koin
 
 ## Next Steps
 - Test the camera functionality on Android devices
 - Refine the book detection algorithm
-- Add image gallery view to show captured images
 - Implement proper error handling
 - Add unit and integration tests
 - Optimize camera performance
@@ -209,4 +222,5 @@ when {
 - The camera feature will initially focus on Android implementation
 - iOS implementation will be minimal with stub functions
 - We'll need to carefully handle the lifecycle of the camera to avoid resource leaks
-- Book detection may require tuning for optimal performance 
+- Book detection may require tuning for optimal performance
+- This simplified approach stores only one image per book, directly in the favorite book entity 

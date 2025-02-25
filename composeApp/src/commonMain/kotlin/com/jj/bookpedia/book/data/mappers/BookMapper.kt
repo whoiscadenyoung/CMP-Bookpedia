@@ -20,7 +20,8 @@ fun SearchedBookDto.toBook(): Book {
         averageRating = ratingsAverage,
         ratingCount = ratingsCount,
         numPages = numPagesMedian,
-        numEditions = numEditions ?: 0
+        numEditions = numEditions ?: 0,
+        customImagePath = null
     )
 }
 //
@@ -36,7 +37,8 @@ fun Book.toBookEntity(): BookEntity {
         ratingsAverage = averageRating,
         ratingsCount = ratingCount,
         numPagesMedian = numPages,
-        numEditions = numEditions
+        numEditions = numEditions,
+        customImagePath = customImagePath
     )
 }
 //
@@ -52,6 +54,7 @@ fun BookEntity.toBook(): Book {
         averageRating = ratingsAverage,
         ratingCount = ratingsCount,
         numPages = numPagesMedian,
-        numEditions = numEditions
+        numEditions = numEditions,
+        customImagePath = customImagePath
     )
 }

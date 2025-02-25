@@ -19,4 +19,10 @@ interface FavoriteBookDao {
 
     @Query("DELETE FROM BookEntity where id = :id")
     suspend fun deleteFavoriteBook(id:String)
+
+    @Query("UPDATE BookEntity SET customImagePath = :imagePath WHERE id = :bookId")
+    suspend fun updateCustomImagePath(bookId: String, imagePath: String)
+
+    @Query("UPDATE BookEntity SET customImagePath = NULL WHERE id = :bookId")
+    suspend fun clearCustomImagePath(bookId: String)
 }

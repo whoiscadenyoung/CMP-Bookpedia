@@ -6,5 +6,5 @@ sealed interface CameraAction {
     data class OnPermissionResult(val isGranted: Boolean) : CameraAction
     data class OnBookDetected(val isDetected: Boolean) : CameraAction
     data class OnImageCaptured(val imagePath: String) : CameraAction
-    data class OnDeleteImage(val imageId: Long) : CameraAction
+    data object OnClearImage : CameraAction
 } 
