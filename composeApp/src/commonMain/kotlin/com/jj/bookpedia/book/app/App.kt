@@ -22,6 +22,8 @@ import com.jj.bookpedia.book.presentation.book_detail.BookDetailScreenRoot
 import com.jj.bookpedia.book.presentation.book_detail.BookDetailViewModel
 import com.jj.bookpedia.book.presentation.book_list.BookListScreenRoot
 import com.jj.bookpedia.book.presentation.book_list.BookListViewModel
+import com.jj.bookpedia.camera.presentation.camera.CameraScreenRoot
+import com.jj.bookpedia.camera.presentation.camera.CameraViewModel
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -72,9 +74,7 @@ fun App() {
                             initialOffset
                         }
                     }
-
                 ) {
-
                     val selectedBookViewModel =
                         it.sharedKoinViewModel<SelectedBookViewModel>(navController)
 
@@ -92,14 +92,36 @@ fun App() {
                         viewModel = viewModel,
                         onBackClick = {
                             navController.navigateUp()
+                        },
+                        onCameraClick = { bookId ->
+                            navController.navigate(Route.Camera(bookId))
                         }
                     )
                 }
-
+                
+                composable<Route.Camera>(
+                    enterTransition = {
+                        slideInHorizontally { initialOffset ->
+                            initialOffset
+                        }
+                    },
+                    exitTransition = {
+                        slideOutHorizontally { initialOffset ->
+                            initialOffset
+                        }
+                    }
+                ) {
+                    val viewModel = koinViewModel<CameraViewModel>()
+                    
+                    CameraScreenRoot(
+                        viewModel = viewModel,
+                        onBackClick = {
+                            navController.navigateUp()
+                        }
+                    )
+                }
             }
         }
-
-
     }
 }
 

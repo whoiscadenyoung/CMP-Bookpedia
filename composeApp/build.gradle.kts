@@ -47,6 +47,11 @@ kotlin {
             implementation(libs.koin.android)
             implementation(libs.koin.androidx.compose)
             implementation(libs.ktor.client.okhttp)
+            
+            // Camera dependencies
+            implementation(libs.bundles.camerax)
+            implementation(libs.mlkit.text.recognition)
+            implementation(libs.accompanist.permissions)
         }
         commonMain.dependencies {
             implementation(compose.runtime)

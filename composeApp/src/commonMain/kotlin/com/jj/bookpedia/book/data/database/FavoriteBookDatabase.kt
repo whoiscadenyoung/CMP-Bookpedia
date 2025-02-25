@@ -4,10 +4,12 @@ import androidx.room.ConstructedBy
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import com.jj.bookpedia.camera.data.database.CapturedImageDao
+import com.jj.bookpedia.camera.data.database.CapturedImageEntity
 
 @Database(
-    entities = [BookEntity::class],
-    version = 1
+    entities = [BookEntity::class, CapturedImageEntity::class],
+    version = 2
 )
 @TypeConverters(
     StringListTypeConverter::class
@@ -16,10 +18,9 @@ import androidx.room.TypeConverters
 abstract class FavoriteBookDatabase : RoomDatabase() {
 
     abstract val favoriteBookDao: FavoriteBookDao
-
+    abstract val capturedImageDao: CapturedImageDao
 
     companion object {
         const val DB_NAME = "book.db"
     }
-
 }

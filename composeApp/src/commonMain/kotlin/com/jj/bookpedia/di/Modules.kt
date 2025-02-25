@@ -10,6 +10,7 @@ import com.jj.bookpedia.book.domain.BookRepository
 import com.jj.bookpedia.book.presentation.SelectedBookViewModel
 import com.jj.bookpedia.book.presentation.book_detail.BookDetailViewModel
 import com.jj.bookpedia.book.presentation.book_list.BookListViewModel
+import com.jj.bookpedia.camera.di.cameraModule
 import com.jj.bookpedia.core.data.HttpClientFactory
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.singleOf
@@ -41,4 +42,6 @@ val sharedModules = module {
     viewModelOf(::BookListViewModel)
     viewModelOf(::SelectedBookViewModel)
     viewModelOf(::BookDetailViewModel)
+    
+    includes(cameraModule)
 }

@@ -1,6 +1,7 @@
 package com.jj.bookpedia.book.presentation.book_detail
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -34,6 +35,7 @@ import cmp_bookpedia.composeapp.generated.resources.rating
 import cmp_bookpedia.composeapp.generated.resources.synopsis
 import com.jj.bookpedia.book.presentation.book_detail.components.BlurredImageBackground
 import com.jj.bookpedia.book.presentation.book_detail.components.BookChip
+import com.jj.bookpedia.book.presentation.book_detail.components.CameraButton
 import com.jj.bookpedia.book.presentation.book_detail.components.ChipSize
 import com.jj.bookpedia.book.presentation.book_detail.components.TitledContent
 import com.jj.bookpedia.core.presentation.SandYellow
@@ -44,7 +46,8 @@ import kotlin.math.round
 @Composable
 fun BookDetailScreenRoot(
     viewModel: BookDetailViewModel,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    onCameraClick: (String) -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -53,6 +56,11 @@ fun BookDetailScreenRoot(
         onAction = { action ->
             when (action) {
                 is BookDetailAction.OnBackClick -> onBackClick()
+                is BookDetailAction.OnCameraClick -> {
+                    state.book?.id?.let { bookId ->
+                        onCameraClick(bookId)
+                    }
+                }
                 else -> Unit
             }
             viewModel.onAction(action)
@@ -79,124 +87,101 @@ fun BookDetailScreen(
         },
         isFavorite = state.isFavorite,
     ) {
-
-         if(state.book != null) {
-            Column(
-                modifier = Modifier
-                    .widthIn(max = 700.dp)
-                    .fillMaxWidth()
-                    .padding(
-                        vertical = 16.dp,
-                        horizontal = 24.dp
-                    )
-                    .verticalScroll(rememberScrollState()),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = state.book.title,
-                    style = MaterialTheme.typography.headlineSmall,
-                    textAlign = TextAlign.Center
-                )
-                Text(
-                    text = state.book.authors.joinToString(),
-                    style = MaterialTheme.typography.titleMedium,
-                    textAlign = TextAlign.Center
-                )
-                Row(
+        Box(modifier = Modifier.fillMaxSize()) {
+            if(state.book != null) {
+                Column(
                     modifier = Modifier
-                        .padding(vertical = 8.dp),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    state.book.averageRating?.let { rating ->
-                        TitledContent(
-                            title = stringResource(Res.string.rating),
-                        ) {
-                            BookChip {
-                                Text(
-                                    text = "${round(rating * 10) / 10.0}"
-                                )
-                                Icon(
-                                    imageVector = Icons.Default.Star,
-                                    contentDescription = null,
-                                    tint = SandYellow
-                                )
-                            }
-                        }
-                    }
-                    state.book.numPages?.let { pageCount ->
-                        TitledContent(
-                            title = stringResource(Res.string.pages),
-                        ) {
-                            BookChip {
-                                Text(text = pageCount.toString())
-                            }
-                        }
-                    }
-                }
-                if(state.book.languages.isNotEmpty()) {
-                    TitledContent(
-                        title = stringResource(Res.string.languages),
-                        modifier = Modifier
-                            .padding(vertical = 8.dp)
-                    ) {
-                        FlowRow(
-                            horizontalArrangement = Arrangement.Center,
-                            modifier = Modifier.wrapContentSize(Alignment.Center)
-                        ) {
-                            state.book.languages.forEach { language ->
-                                BookChip(
-                                    size = ChipSize.SMALL,
-                                    modifier = Modifier.padding(2.dp)
-                                ) {
-                                    Text(
-                                        text = language.uppercase(),
-                                        style = MaterialTheme.typography.bodyMedium
-                                    )
-                                }
-                            }
-                        }
-                    }
-                }
-                Text(
-                    text = stringResource(Res.string.synopsis),
-                    style = MaterialTheme.typography.titleLarge,
-                    modifier = Modifier
-                        .align(Alignment.Start)
+                        .widthIn(max = 700.dp)
                         .fillMaxWidth()
                         .padding(
-                            top = 24.dp,
-                            bottom = 8.dp
+                            vertical = 16.dp,
+                            horizontal = 24.dp
                         )
-                )
-                if(state.isLoading) {
-                    CircularProgressIndicator()
-//                    Box(
-//                        modifier = Modifier
-//                            .fillMaxWidth()
-//                            .weight(1f),
-//                        contentAlignment = Alignment.Center
-//                    ) {
-//                    }
-                } else {
+                        .verticalScroll(rememberScrollState()),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
                     Text(
-                        text = if(state.book.description.isNullOrBlank()) {
-                            stringResource(Res.string.description_unavailable)
-                        } else {
-                            state.book.description
-                        },
-                        style = MaterialTheme.typography.bodyMedium,
-                        textAlign = TextAlign.Justify,
-                        color = if(state.book.description.isNullOrBlank()) {
-                            Color.Black.copy(alpha = 0.4f)
-                        } else Color.Black,
+                        text = state.book.title,
+                        style = MaterialTheme.typography.headlineSmall,
+                        textAlign = TextAlign.Center
+                    )
+                    Text(
+                        text = state.book.authors.joinToString(),
+                        style = MaterialTheme.typography.titleMedium,
+                        textAlign = TextAlign.Center
+                    )
+                    Row(
+                        modifier = Modifier
+                            .padding(vertical = 8.dp),
+                        horizontalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        state.book.averageRating?.let {
+                            BookChip(
+                                text = "${round(it * 10) / 10} ${stringResource(Res.string.rating)}",
+                                size = ChipSize.SMALL,
+                                leadingIcon = {
+                                    Icon(
+                                        imageVector = Icons.Default.Star,
+                                        contentDescription = null,
+                                        tint = SandYellow
+                                    )
+                                }
+                            )
+                        }
+
+                        state.book.numPages?.let {
+                            BookChip(
+                                text = "$it ${stringResource(Res.string.pages)}",
+                                size = ChipSize.SMALL
+                            )
+                        }
+                    }
+
+                    FlowRow(
                         modifier = Modifier
                             .padding(vertical = 8.dp)
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center,
+                        maxItemsInEachRow = 3
+                    ) {
+                        state.book.languages.forEach { language ->
+                            BookChip(
+                                text = "$language ${stringResource(Res.string.languages)}",
+                                size = ChipSize.SMALL
+                            )
+                        }
+                    }
+
+                    TitledContent(
+                        title = stringResource(Res.string.synopsis),
+                        content = {
+                            Text(
+                                text = state.book.description
+                                    ?: stringResource(Res.string.description_unavailable),
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                        }
                     )
                 }
+                
+                // Show camera button only for favorited books
+                if (state.isFavorite) {
+                    CameraButton(
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd)
+                            .padding(16.dp),
+                        onClick = {
+                            onAction(BookDetailAction.OnCameraClick)
+                        }
+                    )
+                }
+            } else {
+                CircularProgressIndicator(
+                    modifier = Modifier
+                        .wrapContentSize()
+                        .align(Alignment.Center)
+                )
             }
         }
     }
-
-
-
 }
